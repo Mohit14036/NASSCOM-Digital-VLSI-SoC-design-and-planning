@@ -1,4 +1,4 @@
-<img width="951" height="1120" alt="image" src="https://github.com/user-attachments/assets/889693e7-ea1d-4e61-92dd-963b6a11f1db" /># NASSCOM-Digital-VLSI-SoC-design-and-planning
+# NASSCOM-Digital-VLSI-SoC-design-and-planning
 
 ## Day 1 - Inception of open-source EDA, OpenLANE and Sky130 PDK
 
@@ -1486,6 +1486,204 @@ Screenshots of commands run and timing report generated
 <img width="883" height="511" alt="image" src="https://github.com/user-attachments/assets/6258a479-ac62-4088-a9f6-740735110e6b" />
 <img width="889" height="517" alt="image" src="https://github.com/user-attachments/assets/e7032c96-8c8c-47d9-8895-c03673e7f2d3" />
 <img width="891" height="172" alt="image" src="https://github.com/user-attachments/assets/b53b6bbe-48c0-49a2-8d32-b04d52e9c409" />
+
+
+</details>
+
+## Day 5 - Final steps for RTL2GDS using tritonRoute and openSTA (25/03/2024 - 26/03/2024)
+
+<details>
+  <summary>
+ IMPLEMENTATION
+  </summary>
+
+* Day 5 tasks:-
+1. Perform generation of Power Distribution Network (PDN) and explore the PDN layout.
+2. Perfrom detailed routing using TritonRoute.
+3. Post-Route parasitic extraction using SPEF extractor.
+4. Post-Route OpenSTA timing analysis with the extracted parasitics of the route.
+
+#### 1. Perform generation of Power Distribution Network (PDN) and explore the PDN layout.
+
+Commands to perform all necessary stages up until now
+
+```bash
+# Change directory to openlane flow directory
+cd Desktop/work/tools/openlane_working_dir/openlane
+
+# alias docker='docker run -it -v $(pwd):/openLANE_flow -v $PDK_ROOT:$PDK_ROOT -e PDK_ROOT=$PDK_ROOT -u $(id -u $USER):$(id -g $USER) efabless/openlane:v0.21'
+# Since we have aliased the long command to 'docker' we can invoke the OpenLANE flow docker sub-system by just running this command
+docker
+```
+```tcl
+# Now that we have entered the OpenLANE flow contained docker sub-system we can invoke the OpenLANE flow in the Interactive mode using the following command
+./flow.tcl -interactive
+
+# Now that OpenLANE flow is open we have to input the required packages for proper functionality of the OpenLANE flow
+package require openlane 0.9
+
+# Now the OpenLANE flow is ready to run any design and initially we have to prep the design creating some necessary files and directories for running a specific design which in our case is 'picorv32a'
+prep -design picorv32a
+
+# Addiitional commands to include newly added lef to openlane flow merged.lef
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+
+# Command to set new value for SYNTH_STRATEGY
+set ::env(SYNTH_STRATEGY) "DELAY 3"
+
+# Command to set new value for SYNTH_SIZING
+set ::env(SYNTH_SIZING) 1
+
+# Now that the design is prepped and ready, we can run synthesis using following command
+run_synthesis
+
+# Following commands are alltogather sourced in "run_floorplan" command
+init_floorplan
+place_io
+tap_decap_or
+
+# Now we are ready to run placement
+run_placement
+
+# Incase getting error
+unset ::env(LIB_CTS)
+
+# With placement done we are now ready to run CTS
+run_cts
+
+# Now that CTS is done we can do power distribution network
+gen_pdn 
+```
+
+Screenshots of power distribution network run
+<img width="886" height="508" alt="image" src="https://github.com/user-attachments/assets/ae97f9de-3fbd-486c-a3b9-dcd1f5b96431" />
+
+<img width="880" height="518" alt="image" src="https://github.com/user-attachments/assets/486581ee-9175-47bb-99c1-b13b3772765a" />
+
+
+Commands to load PDN def in magic in another terminal
+
+```bash
+# Change directory to path containing generated PDN def
+cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/23-12_14-39/tmp/floorplan/
+
+# Command to load the PDN def in magic tool
+magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read 14-pdn.def &
+```
+
+Screenshots of PDN def
+
+<img width="701" height="770" alt="image" src="https://github.com/user-attachments/assets/90af28e3-891b-48ba-8a05-2af7486b3c86" />
+<img width="745" height="606" alt="image" src="https://github.com/user-attachments/assets/418b482b-0c8b-4ee3-bf9a-d3b1ac4b3f11" />
+
+
+#### 2. Perfrom detailed routing using TritonRoute and explore the routed layout.
+
+Command to perform routing
+
+```tcl
+# Check value of 'CURRENT_DEF'
+echo $::env(CURRENT_DEF)
+
+# Check value of 'ROUTING_STRATEGY'
+echo $::env(ROUTING_STRATEGY)
+
+# Command for detailed route using TritonRoute
+run_routing
+```
+
+Screenshots of routing run
+<img width="900" height="346" alt="image" src="https://github.com/user-attachments/assets/7f48e055-4ca0-42fb-9163-5f0e9062d8d3" />
+<img width="883" height="537" alt="image" src="https://github.com/user-attachments/assets/8e653080-ccea-4a2d-bd3a-8c634ee893f1" />
+
+
+Commands to load routed def in magic in another terminal
+
+```bash
+# Change directory to path containing routed def
+cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/23-12_14-39/results/routing/
+
+# Command to load the routed def in magic tool
+magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.def &
+```
+
+Screenshots of routed def
+
+<img width="728" height="780" alt="image" src="https://github.com/user-attachments/assets/41cba066-621b-44f3-a10d-cd7235142d30" />
+<img width="518" height="482" alt="image" src="https://github.com/user-attachments/assets/f8f4e14b-0ada-4c1a-b9e5-5322f788f8e5" />
+
+<img width="438" height="617" alt="image" src="https://github.com/user-attachments/assets/b82ba334-465d-45f9-bd2d-572c4558c34a" />
+
+Screenshot of fast route guide present in `openlane/designs/picorv32a/runs/23-12_14-39/tmp/routing` directory
+q<img width="884" height="798" alt="image" src="https://github.com/user-attachments/assets/e03ffcdd-126e-4c54-8019-f9147bd6057a" />
+
+
+#### 3. Post-Route parasitic extraction using SPEF extractor.
+
+Commands for SPEF extraction using external tool
+
+```bash
+# Change directory
+cd Desktop/work/tools/SPEF_EXTRACTOR
+
+# Command extract spef
+python3 main.py /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/23-12_14-39/tmp/merged.lef /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/23-12_14-39/results/routing/picorv32a.def
+```
+
+#### 4. Post-Route OpenSTA timing analysis with the extracted parasitics of the route.
+
+Commands to be run in OpenLANE flow to do OpenROAD timing analysis with integrated OpenSTA in OpenROAD
+
+```tcl
+# Command to run OpenROAD tool
+openroad
+
+# Reading lef file
+read_lef /openLANE_flow/designs/picorv32a/runs/23-12_14-39/tmp/merged.lef
+
+# Reading def file
+read_def /openLANE_flow/designs/picorv32a/runs/23-12_14-39/results/routing/picorv32a.def
+
+# Creating an OpenROAD database to work with
+write_db pico_route.db
+
+# Loading the created database in OpenROAD
+read_db pico_route.db
+
+# Read netlist post CTS
+read_verilog /openLANE_flow/designs/picorv32a/runs/23-12_14-39/results/synthesis/picorv32a.synthesis_preroute.v
+
+# Read library for design
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+
+# Link design and library
+link_design picorv32a
+
+# Read in the custom sdc we created
+read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+
+# Setting all cloks as propagated clocks
+set_propagated_clock [all_clocks]
+
+# Read SPEF
+read_spef /openLANE_flow/designs/picorv32a/runs/23-12_14-39/results/routing/picorv32a.spef
+
+# Generating custom timing report
+report_checks -path_delay min_max -fields {slew trans net cap input_pins} -format full_clock_expanded -digits 4
+
+# Exit to OpenLANE flow
+exit
+```
+
+Screenshots of commands run and timing report generated
+
+<img width="892" height="498" alt="image" src="https://github.com/user-attachments/assets/187073d6-3d74-4404-9feb-318d870bf87e" />
+<img width="895" height="349" alt="image" src="https://github.com/user-attachments/assets/951f8efc-9aae-4745-aa80-8faabcf9c339" />
+<img width="891" height="520" alt="image" src="https://github.com/user-attachments/assets/2a124221-5aa6-4d75-bc31-d9b44d1e02c6" />
+
+<img width="953" height="1119" alt="image" src="https://github.com/user-attachments/assets/d8fbcb0a-51a2-4217-ae50-4edf13e86f5e" />
+
 
 
 </details>
