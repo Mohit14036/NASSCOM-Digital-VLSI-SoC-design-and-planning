@@ -1431,10 +1431,10 @@ echo $::env(CTS_CLK_BUFFER_LIST)
 openroad
 
 # Reading lef file
-read_lef /openLANE_flow/designs/picorv32a/runs/24-03_10-03/tmp/merged.lef
+read_lef /openLANE_flow/designs/picorv32a/runs/23-12_11-20/tmp/merged.lef
 
 # Reading def file
-read_def /openLANE_flow/designs/picorv32a/runs/24-03_10-03/results/cts/picorv32a.cts.def
+read_def /openLANE_flow/designs/picorv32a/runs/23-12_11-20/results/cts/picorv32a.cts.def
 
 # Creating an OpenROAD database to work with
 write_db pico_cts1.db
@@ -1443,7 +1443,7 @@ write_db pico_cts1.db
 read_db pico_cts.db
 
 # Read netlist post CTS
-read_verilog /openLANE_flow/designs/picorv32a/runs/24-03_10-03/results/synthesis/picorv32a.synthesis_cts.v
+read_verilog /openLANE_flow/designs/picorv32a/runs/23-12_11-20/results/synthesis/picorv32a.synthesis_cts.v
 
 # Read library for design
 read_liberty $::env(LIB_SYNTH_COMPLETE)
@@ -1482,5 +1482,10 @@ echo $::env(CTS_CLK_BUFFER_LIST)
 Screenshots of commands run and timing report generated
 
 <img width="1170" height="235" alt="image" src="https://github.com/user-attachments/assets/f6608912-81cb-41f7-8526-9dc1a636dbcb" />
+<img width="889" height="532" alt="image" src="https://github.com/user-attachments/assets/38430cef-6224-49ed-a5ea-42ca05a8f88c" />
+<img width="883" height="511" alt="image" src="https://github.com/user-attachments/assets/6258a479-ac62-4088-a9f6-740735110e6b" />
+<img width="889" height="517" alt="image" src="https://github.com/user-attachments/assets/e7032c96-8c8c-47d9-8895-c03673e7f2d3" />
+<img width="891" height="172" alt="image" src="https://github.com/user-attachments/assets/b53b6bbe-48c0-49a2-8d32-b04d52e9c409" />
+
 
 </details>
