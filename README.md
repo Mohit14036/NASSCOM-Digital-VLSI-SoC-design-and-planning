@@ -1490,7 +1490,7 @@ Screenshots of commands run and timing report generated
 
 </details>
 
-## Day 5 - Final steps for RTL2GDS using tritonRoute and openSTA (25/03/2024 - 26/03/2024)
+## Day 5 - Final steps for RTL2GDS using tritonRoute and openSTA
 
 <details>
   <summary>
