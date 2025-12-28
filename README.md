@@ -186,11 +186,6 @@ prep -design picorv32a
 # Now that the design is prepped and ready, we can run synthesis using following command
 run_synthesis
 
-# Exit from OpenLANE flow
-exit
-
-# Exit from OpenLANE flow docker sub-system
-exit
 ```
 
 
@@ -372,15 +367,7 @@ Standard cells legally placed
 <img width="1320" height="813" alt="image" src="https://github.com/user-attachments/assets/c8583c21-6da7-4e74-9fab-5a8ee0a71868" />
 
 
-Commands to exit from current run
 
-```tcl
-# Exit from OpenLANE flow
-exit
-
-# Exit from OpenLANE flow docker sub-system
-exit
-```
 </details>
 
 ## Day3 - Design library cell using Magic Layout and ngspice characterization 
@@ -1294,8 +1281,7 @@ help write_verilog
 # Overwriting current synthesis netlist
 write_verilog /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/23-12_11-20/results/synthesis/picorv32a.synthesis.v
 
-# Exit from OpenSTA since timing analysis is done
-exit
+
 ```
 
 
@@ -1390,8 +1376,6 @@ help report_checks
 # Generating custom timing report
 report_checks -path_delay min_max -fields {slew trans net cap input_pins} -format full_clock_expanded -digits 4
 
-# Exit to OpenLANE flow
-exit
 ```
 
 Screenshots of commands run and timing report generated
@@ -1672,8 +1656,6 @@ read_spef /openLANE_flow/designs/picorv32a/runs/23-12_14-39/results/routing/pico
 # Generating custom timing report
 report_checks -path_delay min_max -fields {slew trans net cap input_pins} -format full_clock_expanded -digits 4
 
-# Exit to OpenLANE flow
-exit
 ```
 
 Screenshots of commands run and timing report generated
